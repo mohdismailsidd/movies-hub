@@ -84,7 +84,7 @@ app.UseSwaggerUI(options =>
         options.SwaggerEndpoint(endpoint, descriptor.Version);
     }
 });
-UseDbSeeder(app);
+//UseDbSeeder(app);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
