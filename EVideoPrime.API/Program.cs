@@ -1,5 +1,6 @@
 using EVideoPrime.API.BusinessAccessLayer;
 using EVideoPrime.API.Repository;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,7 @@ builder.Services.AddSwaggerGen(option =>
     option.OperationFilter<ApiVersionFilter>();
 
 });
-builder.Services.AddDbContext<SqlDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("VideoPrimeDb")));
+builder.Services.AddDbContext<SqlDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AzureSqlDb")));
 builder.Services.AddRepositories();
 builder.Services.AddBusinessLayer();
 var app = builder.Build();
@@ -83,15 +84,7 @@ app.UseSwaggerUI(options =>
         options.SwaggerEndpoint(endpoint, descriptor.Version);
     }
 });
-app.Use((context, next) => { 
-    using (var scopes = app.Services.CreateScope())
-    {
-        var dbContext = app.Services.GetRequiredService<SqlDbContext>();
-        if (dbContext.Database.EnsureCreated())
-            dbContext.Database.Migrate();
-    }
-    return next(context); 
-});
+UseDbSeeder(app);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
@@ -99,32 +92,14 @@ app.MapControllers();
 
 app.Run();
 
-
-public class ReplaceVersionWithExactValueInPathFilter : IDocumentFilter
+void UseDbSeeder(IApplicationBuilder app)
 {
-    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
     {
-        var paths = swaggerDoc.Paths;
-
-        swaggerDoc.Paths = new OpenApiPaths();
-
-        foreach (var path in paths)
+        using (var context = serviceScope.ServiceProvider.GetService<SqlDbContext>())
         {
-            var key = path.Key.Replace("v{version}", $"v{swaggerDoc.Info.Version}");
-
-            var value = path.Value;
-
-            swaggerDoc.Paths.Add(key, value);
+            if (context.Database.EnsureCreated())
+                context.Database.Migrate();
         }
-    }
-}
-
-public class ApiVersionFilter : IOperationFilter
-{
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
-    {
-        var parametersToRemove = operation.Parameters.Where(x => x.Name == "version").ToList();
-        foreach (var parameter in parametersToRemove)
-            operation.Parameters.Remove(parameter);
     }
 }
