@@ -1,9 +1,10 @@
-﻿using EVideoPrime.API.BusinessAccessLayer.Interface.VideoPrime;
+﻿using EVideoPrime.API.Abstractions.Models.VideoPrime;
+using EVideoPrime.API.BusinessAccessLayer.Interface.VideoPrime;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EVideoPrime.API.Controllers.VideoPrime
+namespace EVideoPrime.API.Controllers.V2.VideoPrime
 {
-    [ApiVersion("1")]
+    [ApiVersion("2")]
     public class PlanController : BaseApiController
     {
         private readonly IPlanServices _services;
@@ -20,12 +21,18 @@ namespace EVideoPrime.API.Controllers.VideoPrime
             return Ok(result);
         }
 
-
         [HttpGet("{id}")]
         public IActionResult GetPlanById(int Id)
         {
             var result = _services.GetPlanAsync(Id);
             return Ok(result);
+        }
+
+        [HttpPost]
+        public IActionResult CreatePlan(PlanModel model)
+        {
+            var result = _services.AddPlanAsync(model);
+            return CreatedAtAction("CreatePlan",result);
         }
     }
 }

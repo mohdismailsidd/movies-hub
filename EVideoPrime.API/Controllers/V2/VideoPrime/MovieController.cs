@@ -4,30 +4,30 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace EVideoPrime.API.Controllers.VideoPrime
+namespace EVideoPrime.API.Controllers.V2.VideoPrime
 {
-    [ApiVersion("1")]
-    public class LanguageController : BaseApiController
+    [ApiVersion("2")]
+    public class MovieController : BaseApiController
     {
-        private readonly ILanguageServices _services;
+        private readonly IMovieServices _services;
 
-        public LanguageController(ILanguageServices services)
+        public MovieController(IMovieServices services)
         {
             _services = services;
         }
 
         [HttpGet]
-        public IActionResult GetAllLanguage()
+        public IActionResult GetAllMovie()
         {
-            var result = _services.GetAllLanguageAsync();
+            var result = _services.GetAllMoviesAsync();
             return Ok(result);
         }
 
 
         [HttpGet("{id}")]
-        public IActionResult GetLanguageById(int Id)
+        public IActionResult GetMovieById(int Id)
         {
-            var result = _services.GetLanguageAsync(Id);
+            var result = _services.GetMovieAsync(Id);
             return Ok(result);
         }
     }

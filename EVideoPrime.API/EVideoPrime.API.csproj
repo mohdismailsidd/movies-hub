@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Identity\" />
+    <Folder Include="Controllers\V1\Identity\" />
+    <Folder Include="Controllers\V2\Identity\" />
   </ItemGroup>
 
   <ItemGroup>

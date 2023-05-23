@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace EVideoPrime.API.Controllers.VideoPrime
+namespace EVideoPrime.API.Controllers.V1.VideoPrime
 {
     [ApiVersion("1")]
     public class MovieController : BaseApiController
